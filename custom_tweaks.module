@@ -24,7 +24,7 @@ function custom_tweaks_help($route_name, RouteMatchInterface $route_match) {
 }
 
 function custom_tweaks_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
-  if (is_array($form['#theme')) {
+  if (is_array($form) {
     if (in_array('views_exposed_form__acquia_search__page', $form['#theme'])) {
       $form['search']['#placeholder'] = t('Search');
     }
