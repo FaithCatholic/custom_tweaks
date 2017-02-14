@@ -1,0 +1,32 @@
+<?php
+
+/**
+ * @file
+ * Contains custom_tweaks.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function custom_tweaks_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the custom_tweaks module.
+    case 'help.page.custom_tweaks':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Various tweaks, modifications, and enhancements to various frontend and backend features.') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+function custom_tweaks_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  if (is_array($form['#theme')) {
+    if (in_array('views_exposed_form__acquia_search__page', $form['#theme'])) {
+      $form['search']['#placeholder'] = t('Search');
+    }
+  }
+}

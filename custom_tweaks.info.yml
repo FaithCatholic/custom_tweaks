@@ -1,0 +1,5 @@
+name: Custom tweaks
+type: module
+description: Various tweaks, modifications, and enhancements to various frontend and backend features.
+core: 8.x
+package: Custom
