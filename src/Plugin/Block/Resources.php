@@ -3,6 +3,7 @@
 namespace Drupal\custom_tweaks\Plugin\Block;
 
 use Drupal\Core\Block\BlockBase;
+use Drupal\Core\Cache\Cache;
 
 /**
  * Provides a 'Resources' block.
@@ -18,25 +19,28 @@ class Resources extends BlockBase {
    * {@inheritdoc}
    */
   public function build() {
-    $build = [];
-    $build['resources']['#markup'] = $this->_getViewsContent();
-    return $build;
+    if ($content = custom_tweaks_views_get_resources('media_resources', ['attachment_1', 'attachment_2', 'attachment_3'])) {
+      $build = [];
+      $build['resources']['#markup'] = $content;
+      return $build;
+    }
   }
 
-  protected function _getViewsContent() {
-    $documents = \Drupal\views\Views::getView('media_resources');
-    $documents->setDisplay('attachment_1');
-    $documents = drupal_render($documents->render());
-
-    $links = \Drupal\views\Views::getView('media_resources');
-    $links->setDisplay('attachment_2');
-    $links = drupal_render($links->render());
-
-    $videos = \Drupal\views\Views::getView('media_resources');
-    $videos->setDisplay('attachment_3');
-    $videos = drupal_render($videos->render());
-
-    $output = $documents . $links . $videos;
-    return $output;
+  public function getCacheTags() {
+    // Rebuild block cache on node change.
+    if ($node = \Drupal::routeMatch()->getParameter('node')) {
+      // If there is node add its cachetag.
+      return Cache::mergeTags(parent::getCacheTags(), array('node:' . $node->id()));
+    } else {
+      // Return default tags.
+      return parent::getCacheTags();
+    }
   }
+
+  public function getCacheContexts() {
+    // Rebuild block cache on every new route.
+    // Set context with 'route' context tag when using \Drupal::routeMatch().
+    return Cache::mergeContexts(parent::getCacheContexts(), array('route'));
+  }
+
 }

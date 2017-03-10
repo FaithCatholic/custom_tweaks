@@ -30,3 +30,16 @@ function custom_tweaks_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $
     }
   }
 }
+
+function custom_tweaks_views_get_resources(string $viewname, array $displays) {
+  $output = '';
+  foreach($displays as $display) {
+    $view = \Drupal\views\Views::getView($viewname);
+    $view->setDisplay($display);
+    $view->execute();
+    if ($view->total_rows) {
+      $output .= drupal_render($view->render());
+    }
+  }
+  return $output;
+}
