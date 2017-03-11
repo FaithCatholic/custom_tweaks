@@ -29,17 +29,17 @@ class Resources extends BlockBase {
   public function getCacheTags() {
     // Rebuild block cache on node change.
     if ($node = \Drupal::routeMatch()->getParameter('node')) {
-      // If there is node add its cachetag.
+      // Use node cachetag for node displays.
       return Cache::mergeTags(parent::getCacheTags(), array('node:' . $node->id()));
     } else {
-      // Return default tags.
+      // Otherwise use default tags.
       return parent::getCacheTags();
     }
   }
 
   public function getCacheContexts() {
     // Rebuild block cache on every new route.
-    // Set context with 'route' context tag when using \Drupal::routeMatch().
+    // Use 'route' context tag for \Drupal::routeMatch().
     return Cache::mergeContexts(parent::getCacheContexts(), array('route'));
   }
 

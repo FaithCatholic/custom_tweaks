@@ -5,7 +5,10 @@
  * Contains custom_tweaks.module.
  */
 
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\user\Entity\User;
+use Drupal\views\Views;
 
 /**
  * Implements hook_help().
@@ -23,23 +26,62 @@ function custom_tweaks_help($route_name, RouteMatchInterface $route_match) {
   }
 }
 
-function custom_tweaks_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
-  if (is_array($form)) {
-    if (in_array('views_exposed_form__acquia_search__page', $form['#theme'])) {
-      $form['search']['#placeholder'] = t('Search');
-    }
+/**
+ * Implements hook_form_alter().
+ */
+function custom_tweaks_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if (in_array('views_exposed_form__acquia_search__page', $form['#theme'])) {
+    $form['search']['#placeholder'] = t('Search');
   }
 }
 
+/**
+ * Implements hook_user_format_name_alter().
+ */
+function custom_tweaks_user_format_name_alter(&$name, $account) {
+  $fields = [
+    'field_user_prefix',
+    'field_user_first_name',
+    'field_user_last_name',
+    'field_user_suffix',
+  ];
+
+  $entity = User::load($account->id());
+  $output = '';
+
+  foreach($fields as $field) {
+    if ($entity->hasField($field)) {
+      $output .= $entity->{$field}->value;
+      $output .= ' ';
+    }
+  }
+
+  $output = trim($output);
+  $output = preg_replace('!\s+!', ' ', $output); // no repeating spaces
+
+  if ($output != '') {
+    $name = t('@name', array('@name' => $output));
+  }
+}
+
+/**
+ * Helper function that grabs the content from a view's display(s).
+ * @param  string $viewname The machine name of the view.
+ * @param  array  $displays An array that lists the machine name of the desired displays.
+ * @return string $output   The resulting markup, if any.
+ */
 function custom_tweaks_views_get_resources(string $viewname, array $displays) {
   $output = '';
+
   foreach($displays as $display) {
-    $view = \Drupal\views\Views::getView($viewname);
+    $view = Views::getView($viewname);
     $view->setDisplay($display);
     $view->execute();
+
     if ($view->total_rows) {
       $output .= drupal_render($view->render());
     }
   }
+
   return $output;
 }
