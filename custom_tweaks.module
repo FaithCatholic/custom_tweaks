@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains custom_tweaks.module.
+ * Contains custom_tweaks.module
  */
 
 use Drupal\Core\Form\FormStateInterface;
