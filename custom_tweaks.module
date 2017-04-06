@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains custom_tweaks.module
+ * Contains custom_tweaks.module.
  */
 
 use Drupal\Core\Form\FormStateInterface;
@@ -27,10 +27,52 @@ function custom_tweaks_help($route_name, RouteMatchInterface $route_match) {
 }
 
 /**
+ * Impelements hook_mail_alter();
+ */
+function custom_tweaks_mail_alter(&$message) {
+  if ($message['id'] === 'contact_user_mail') {
+    $contact_message = $message['params']['contact_message'];
+    $sender = $message['params']['sender'];
+    $language = \Drupal::languageManager()->getLanguage($message['langcode']);
+    $options = array('langcode' => $language->getId());
+    $variables = array(
+      '@site-name' => \Drupal::config('system.site')->get('name'),
+      '@sender-name' => $sender->getDisplayName(),
+      '@recipient-name' => $message['params']['recipient']->getDisplayName(),
+    );
+    if ($sender->isAuthenticated()) {
+      $variables['@sender-url'] = $sender->url('canonical', array('absolute' => TRUE, 'language' => $language));
+    }
+    else {
+      $variables['@sender-url'] = $message['params']['sender']->getEmail();
+    }
+    $message['body'] = array();
+    $message['body'][] = t('Hello @recipient-name,', $variables, $options);
+    $message['body'][] = t("@sender-name (@sender-url) has sent you a message via your contact form at @site-name.", $variables, $options);
+    $build = entity_view($contact_message, 'mail');
+    $message['body'][] = \Drupal::service('renderer')->renderPlain($build);
+  }
+}
+
+/**
  * Implements hook_form_alter().
  */
 function custom_tweaks_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  if (in_array('views_exposed_form__acquia_search__page', $form['#theme'])) {
+  if ($form_id === 'contact_message_personal_form') {
+    $form['#action'] .= '?destination=contact/success';
+  }
+  // Views filters lose contextual filters (args) in the form action! Which means we must
+  // manually re-write the form action url to include the extra args.
+  if (is_array($form['#theme']) && in_array('views_exposed_form__resources__page_1', $form['#theme'])) {
+    if ($form['#action'] === '/resources' || $form['#action'] === '/resources/all' || $form['#action'] === '/resources/%2A') {
+      $path = \Drupal::request()->getpathInfo();
+      $args  = explode('/', $path);
+      if (array_key_exists(2, $args)) {
+        $form['#action'] = '/resources/'. $args[2];
+      }
+    }
+  }
+  if (is_array($form['#theme']) && in_array('views_exposed_form__acquia_search__page', $form['#theme'])) {
     $form['search']['#placeholder'] = t('Search');
   }
 }
@@ -50,7 +92,8 @@ function custom_tweaks_views_get_resources($viewname, $displays) {
     $view->execute();
 
     if ($view->total_rows) {
-      $output .= drupal_render($view->render());
+      $render = $view->render();
+      $output .= drupal_render($render);
     }
   }
 
