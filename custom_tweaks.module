@@ -58,6 +58,7 @@ function custom_tweaks_mail_alter(&$message) {
  * Implements hook_form_alter().
  */
 function custom_tweaks_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Redirect personal contact form submissions to our custom controller in this module.
   if ($form_id === 'contact_message_personal_form') {
     $form['#action'] .= '?destination=contact/success';
   }
