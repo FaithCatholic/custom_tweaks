@@ -1,12 +1,9 @@
   "name": "faithcatholic/custom_tweaks",
-  "description": "Tweaks for D8",
-  "type": "drupal-module",
-  "license": "GPL-2.0+",
-  "authors": [{
-    "name": "Nicholas Ketchum",
-    "homepage": "https://www.drupal.org/"
-  }],
-
+  "extra": {
+    "branch-alias": {
+        "dev-master": "1.1.x-dev"
+    }
+},
   "autoload": {
     "psr-4": {
       "Drupal\\custom_tweaks\\": "src/"
