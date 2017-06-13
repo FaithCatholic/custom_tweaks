@@ -1,13 +1,3 @@
 { 
-"name": "faithcatholic/custom_tweaks",
-  "extra": {
-    "branch-alias": {
-        "dev-master": "1.1.x-dev"
-    }
-},
-  "autoload": {
-    "psr-4": {
-      "Drupal\\custom_tweaks\\": "src/"
-    }
-  }
+"name": "faithcatholic/custom_tweaks"
 }
