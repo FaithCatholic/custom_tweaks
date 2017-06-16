@@ -2,7 +2,7 @@
 custom_tweaks.contact_confirmation_default:
   path: '/contact/success'
   defaults:
-    _controller: '\Drupal\custom_tweaks\Controller\ContactConfirmation::default'
+    _controller: '\Drupal\custom_tweaks\Controller\ContactConfirmation::success'
     _title: 'Message sent!'
   requirements:
     _permission: 'access content'

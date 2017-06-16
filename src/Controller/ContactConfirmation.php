@@ -15,9 +15,9 @@ class ContactConfirmation extends ControllerBase {
    * Default.
    *
    * @return string
-   *   Return Hello string.
+   *   Return success page.
    */
-  public function default() {
+  public function success() {
     return [
       '#type' => 'markup',
       '#markup' => $this->t('<p>Thank you, your message has been sent successfully!</p><p><a href="/">Return to home page...</a></p>')
