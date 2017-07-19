@@ -2,7 +2,7 @@
 
 namespace Drupal\custom_tweaks\Plugin\Field\FieldFormatter;
 
-use Drupal\datetime_range\Plugin\Field\FieldFormatter\DateRangeCustomFormatter as DateRangeCustomFormatterBase;
+use Drupal\datetime_range\Plugin\Field\FieldFormatter\DateRangeCustomFormatter;
 use Drupal\Core\Field\FieldItemListInterface;
 
 /**
@@ -12,14 +12,14 @@ use Drupal\Core\Field\FieldItemListInterface;
  * configurable date format using the PHP date syntax and separator.
  *
  * @FieldFormatter(
- *   id = "daterange_custom_start",
- *   label = @Translation("Custom start time"),
+ *   id = "daterange_custom_end",
+ *   label = @Translation("Custom end time"),
  *   field_types = {
  *     "daterange"
  *   }
  * )
  */
-class DateRangeCustomFormatter extends DateRangeCustomFormatterBase {
+class DateRangeEndFormatter extends DateRangeCustomFormatter {
 
   /**
    * {@inheritdoc}
@@ -27,11 +27,11 @@ class DateRangeCustomFormatter extends DateRangeCustomFormatterBase {
   public function viewElements(FieldItemListInterface $items, $langcode) {
     $elements = [];
     foreach ($items as $delta => $item) {
-      if (!empty($item->start_date)) {
-        /** @var \Drupal\Core\Datetime\DrupalDateTime $start_date */
-        $start_date = $item->start_date;
-        // Always return the start date/time only.
-        $elements[$delta] = $this->buildDate($start_date);
+      if (!empty($item->end_date)) {
+        /** @var \Drupal\Core\Datetime\DrupalDateTime $end_date */
+        $end_date = $item->end_date;
+        // Always return the end date/time only.
+        $elements[$delta] = $this->buildDate($end_date);
       }
     }
     return $elements;
