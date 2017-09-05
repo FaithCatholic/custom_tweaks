@@ -98,8 +98,15 @@ function custom_tweaks_form_alter(&$form, FormStateInterface $form_state, $form_
       }
     }
   }
+
+  // Acquia Search.
   if (is_array($form['#theme']) && in_array('views_exposed_form__acquia_search__page', $form['#theme'])) {
     $form['search']['#placeholder'] = t('Search');
+  }
+
+  // Search API.
+  if (is_array($form['#theme']) && in_array('search_api_page_block_form', $form['#theme'])) {
+    $form['keys']['#placeholder'] = t('Search');
   }
 }
 
