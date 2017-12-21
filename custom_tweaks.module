@@ -111,6 +111,15 @@ function custom_tweaks_form_alter(&$form, FormStateInterface $form_state, $form_
 }
 
 /**
+ * Implements hook_form_BASE_FORM_ID_alter().
+ */
+function custom_tweaks_form_node_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Remove the "Save and view AMP page" buttons from node forms with AMP enabled.
+  unset($form['actions']['save_view_amp']);
+  unset($form['actions']['save_view_amp_with_warn']);
+}
+
+/**
  * Helper function that grabs the content from a view's display(s).
  * @param  string $viewname The machine name of the view.
  * @param  array  $displays An array that lists the machine name of the desired displays.
