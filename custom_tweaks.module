@@ -49,7 +49,10 @@ function custom_tweaks_mail_alter(&$message) {
     $message['body'] = array();
     $message['body'][] = t('Hello @recipient-name,', $variables, $options);
     $message['body'][] = t("@sender-name (@sender-url) has sent you a message via your contact form at @site-name.", $variables, $options);
-    $build = entity_view($contact_message, 'mail');
+
+    $view_builder = \Drupal::entityTypeManager()->getViewBuilder('contact_message');
+    $build = $view_builder->view($contact_message, 'mail');
+
     $message['body'][] = \Drupal::service('renderer')->renderPlain($build);
   }
 }
@@ -135,7 +138,7 @@ function custom_tweaks_views_get_resources($viewname, $displays) {
 
     if ($view->total_rows) {
       $render = $view->render();
-      $output .= drupal_render($render);
+      $output .= \Drupal::service('renderer')->render($render);
     }
   }
 

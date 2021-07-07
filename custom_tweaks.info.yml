@@ -2,4 +2,5 @@ name: Custom tweaks
 type: module
 description: Various tweaks, modifications, and enhancements to various frontend and backend features.
 core: 8.x
+core_version_requirement: ^8 || ^9
 package: Custom
