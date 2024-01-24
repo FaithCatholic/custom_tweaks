@@ -7,6 +7,7 @@
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\custom_tweaks\DateTimeTweaks;
 use Drupal\user\Entity\User;
 use Drupal\views\Views;
 
@@ -58,28 +59,12 @@ function custom_tweaks_mail_alter(&$message) {
 }
 
 /**
- * Implements hook_WIDGET_form_alter().
+ * Implements hook_field_widget_single_element_form_alter().
  */
-function custom_tweaks_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
-  // Swap HTML5 time input and replace with a text input for ALL date+time fields.
-  if (array_key_exists('value', $element) && $element['value']['#type'] === 'datetime') {
-    $element['value']['#date_time_callbacks'][] = '_custom_tweaks_alter_time_widget';
-    // Check for an end date, too
-    if (array_key_exists('end_value', $element)) {
-      $element['end_value']['#date_time_callbacks'][] = '_custom_tweaks_alter_time_widget';
-    }
-  }
-}
-
-/**
- * Called from within hook_WIDGET_form_alter().
- */
-function _custom_tweaks_alter_time_widget(&$element, $form_state, $date) {
-  if (array_key_exists('#description', $element['time']) && !$element['time']['#description']) {
-    $element['time']['#description'] = t('Format: 04:30 PM');
-  }
-  $element['time']['#attributes']['type'] = 'text';
-  $element['time']['#attributes']['placeholder'] = '04:30 PM';
+function custom_tweaks_field_widget_single_element_form_alter(&$element, FormStateInterface $form_state, $context): void {
+  $tweaks = Drupal::classResolver(DateTimeTweaks::class);
+  assert($tweaks instanceof DateTimeTweaks);
+  $tweaks->widgetFormAlter($element, $form_state, $context);
 }
 
 /**
