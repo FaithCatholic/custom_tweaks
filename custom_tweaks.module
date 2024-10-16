@@ -42,9 +42,8 @@ function custom_tweaks_mail_alter(&$message) {
       '@recipient-name' => $message['params']['recipient']->getDisplayName(),
     );
     if ($sender->isAuthenticated()) {
-      $variables['@sender-url'] = $sender->url('canonical', array('absolute' => TRUE, 'language' => $language));
-    }
-    else {
+      $variables['@sender-url'] = $sender->toUrl('canonical', ['absolute' => TRUE, 'language' => $language])->toString();
+    } else {
       $variables['@sender-url'] = $message['params']['sender']->getEmail();
     }
     $message['body'] = array();
